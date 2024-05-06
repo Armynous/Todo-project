@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Paper, Typography, TextField, Button } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Todo {
   _id: string;
@@ -13,34 +14,35 @@ interface Todo {
 const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState<Todo>({
-    _id: '',
+    _id: uuidv4(),
     title: '',
     description: '',
     completed: false,
-    createdAt: '',
-    updatedAt: ''
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   });
 
   useEffect(() => {
     fetch('http://localhost:8080/api/todos')
       .then(res => res.json())
       .then(data => {
-        console.log(data);
         setTodos(data.data);
       })
       .catch(error => {
         console.error('Error fetching todos:', error);
       });
-  }, []);
+  }, [todos]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewTodo({
       ...newTodo,
       [e.target.name]: e.target.value
-    });    
+    });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     fetch('http://localhost:8080/api/todos', {
       method: 'POST',
       headers: {
@@ -56,14 +58,30 @@ const App: React.FC = () => {
           title: '',
           description: '',
           completed: false,
-          createdAt: '',
-          updatedAt: ''
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         });
       })
       .catch(error => {
         console.error('Error creating todo:', error);
       });
   };
+
+  const handleDelete = async (id: string) => {
+    const todoId = id;
+
+    await fetch(`http://localhost:8080/api/todos/${todoId}`, {
+      method: 'DELETE',
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to delete todo');
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting todo:', error);
+      });
+  }
 
   return (
     <Container>
@@ -102,10 +120,11 @@ const App: React.FC = () => {
               <Typography>
                 Completed: {todo.completed ? 'Yes' : 'No'}
               </Typography>
+              <Button className="btn btn-neutral">Edit</Button>
+              <Button onClick={() => handleDelete(todo._id)} color="error">Delete</Button>
             </li>
           ))}
         </ul>
-        <Button className="btn btn-neutral">Click me</Button>
       </Paper>
     </Container>
   );
