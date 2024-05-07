@@ -24,7 +24,7 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/todos')
+    fetch('https://1e0a-118-172-58-161.ngrok-free.app')
       .then(res => res.json())
       .then(data => {
         setTodos(data.data);
@@ -44,7 +44,7 @@ const App: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch('http://localhost:8080/api/todos', {
+    fetch('https://1e0a-118-172-58-161.ngrok-free.app', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ const App: React.FC = () => {
   const handleDelete = async (id: string) => {
     const todoId = id;
 
-    await fetch(`http://localhost:8080/api/todos/${todoId}`, {
+    await fetch(`https://1e0a-118-172-58-161.ngrok-free.app/${todoId}`, {
       method: 'DELETE',
     })
       .then(res => {
@@ -86,7 +86,7 @@ const App: React.FC = () => {
 
   const updateTodo = async (todoId: string, newData: Partial<Todo>) => {
     try {
-      await fetch(`http://localhost:8080/api/todos/${todoId}`, {
+      await fetch(`https://1e0a-118-172-58-161.ngrok-free.app/${todoId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
