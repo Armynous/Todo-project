@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Paper, Typography, TextField, Button } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2'
 
 interface Todo {
   _id: string;
@@ -83,6 +84,38 @@ const App: React.FC = () => {
       });
   }
 
+  const updateTodo = async (todoId: string, newData: Partial<Todo>) => {
+    try {
+      await fetch(`http://localhost:8080/api/todos/${todoId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newData),
+      });
+    } catch (error) {
+      console.error('Error updating todo:', error);
+    }
+  };
+
+
+  const handleEdit = async (todo: Todo) => {
+    Swal.fire({
+      title: 'Edit Todo',
+      html:
+        `<input id="swal-input-title" class="swal2-input" value="${todo.title}">` +
+        `<input id="swal-input-description" class="swal2-input" value="${todo.description}">`,
+      focusConfirm: false,
+      preConfirm: () => {
+        const title = (document.getElementById('swal-input-title') as HTMLInputElement).value;
+        const description = (document.getElementById('swal-input-description') as HTMLInputElement).value;
+
+
+        updateTodo(todo._id, { title, description });
+      }
+    });
+  };
+
   return (
     <Container>
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
@@ -117,10 +150,7 @@ const App: React.FC = () => {
             <li key={todo._id}>
               <Typography variant="h6">{todo.title}</Typography>
               <Typography>{todo.description}</Typography>
-              <Typography>
-                Completed: {todo.completed ? 'Yes' : 'No'}
-              </Typography>
-              <Button className="btn btn-neutral">Edit</Button>
+              <Button onClick={async () => handleEdit(todo)} className="btn btn-neutral">Edit</Button>
               <Button onClick={() => handleDelete(todo._id)} color="error">Delete</Button>
             </li>
           ))}
