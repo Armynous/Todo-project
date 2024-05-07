@@ -24,7 +24,11 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/todos')
+    fetch('https://grateful-firefly-expert.ngrok-free.app/api/todos', {
+      headers: {
+        'ngrok-skip-browser-warning': '1111'
+      }
+    })
       .then(res => res.json())
       .then(data => {
         setTodos(data.data);
@@ -44,9 +48,10 @@ const App: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch('http://localhost:8080/api/todos', {
+    fetch('https://grateful-firefly-expert.ngrok-free.app/api/todos', {
       method: 'POST',
       headers: {
+        'ngrok-skip-browser-warning': '1111',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(newTodo)
@@ -71,8 +76,11 @@ const App: React.FC = () => {
   const handleDelete = async (id: string) => {
     const todoId = id;
 
-    await fetch(`http://localhost:8080/api/todos/${todoId}`, {
+    await fetch(`https://grateful-firefly-expert.ngrok-free.app/api/todos/${todoId}`, {
       method: 'DELETE',
+      headers: {
+        'ngrok-skip-browser-warning': '1111'
+      }
     })
       .then(res => {
         if (!res.ok) {
@@ -86,9 +94,10 @@ const App: React.FC = () => {
 
   const updateTodo = async (todoId: string, newData: Partial<Todo>) => {
     try {
-      await fetch(`http://localhost:8080/api/todos/${todoId}`, {
+      await fetch(`https://grateful-firefly-expert.ngrok-free.app/api/todos/${todoId}`, {
         method: 'PATCH',
         headers: {
+          'ngrok-skip-browser-warning': '1111',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newData),
